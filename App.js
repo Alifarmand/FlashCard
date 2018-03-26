@@ -1,21 +1,23 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { Text, View } from 'react-native'
 import { Provider } from 'react-redux'
 import { applyMiddleware, createStore } from 'redux'
+import thunk from 'redux-thunk'
 import styled from 'styled-components'
+import Navigator from './components/Navigator'
+import reducer from './reducers'
 
 const store = createStore(reducer, applyMiddleware(thunk))
 
 export default class App extends React.Component {
-  render() {
+  render () {
     return (
-      <Provider store={store}>
-        <Wrapper>
-          <Text>Testing if this works!</Text>
-          <Text>YES IT DOES!</Text>
-        </Wrapper>
-      </Provider>
-    );
+      <Provider store={store} >
+        <Wrapper >
+          <Navigator />
+        </Wrapper >
+      </Provider >
+    )
   }
 }
 
