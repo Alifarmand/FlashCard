@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "sdkVersion": "25.0.0"
+  },
+  "name": "Flashcard",
+  "description": "A card game made for Udacity React Native App project",
+  "Author": "Ali Farmand",
+  "repository": "https://github.com/jane-doe/small-sharp-tool"
+}
