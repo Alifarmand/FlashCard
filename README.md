@@ -6,7 +6,7 @@ It's a questionnaire game with cards where you can answer and peak the answer wh
 * Use NPM or Yarn to get the project running.
 
 
-## To run the proejct you will need expo
+## To run the proejct you will need expo or emulators
 
 Open it in the [Expo app](https://expo.io) on your phone to view it. If you have yarn, you know what to do, if not just use the npm commands.
 
