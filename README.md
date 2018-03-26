@@ -1,4 +1,4 @@
-###This project is built with create-react-native-app.
+###This project is built with create-react-native-app.###
 It is made for learning purpose as a project for Udacity.
 It's a questionnaire game with cards where you can answer and peak the answer while it has a counting system for points. 
 
@@ -22,7 +22,7 @@ Now scan the QR code in your terminal with the expo app on your phone.
 That's it, now you can see the project.
 
 
-###Other available commands
+##Other available commands##
 
 `npm test`  
 
