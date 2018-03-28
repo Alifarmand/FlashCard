@@ -19,7 +19,7 @@ yarn start / npm start
 ```
 
 Now scan the QR code in your terminal with the expo app on your phone.
-That's it, now you can see the project.
+That's it, now you can see the project. PS. I removed redux from the project, due to time limitation and the fact that this project can be done without.
 
 
 #### Other available commands

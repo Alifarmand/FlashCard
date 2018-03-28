@@ -1,95 +1,105 @@
 import { Notifications, Permissions } from 'expo'
 import { AsyncStorage } from 'react-native'
 
-export const DECKS = 'udaciflashy_decks'
-export const NOTIFICATIONS = 'udaciflashy_notification'
+const DECKS = 'flashcards:decks'
+const NOTIFICATION_KEY = 'flashcards:notification'
 
-class API {
-  getDecks = () => {
-    return AsyncStorage.getItem(DECKS)
-  }
+/**
+ * GETTING DECKS
+ * @returns {*|Promise}
+ */
+export function getDecks () {
+  return AsyncStorage.getItem(DECKS)
+}
 
-  /**
-   * Making the card
-   * @param deckId
-   * @param question
-   * @param answer
-   * @param isCorrect
-   * @returns {Promise<*>|Promise<T>}
-   */
-  createCard = ({deckId, question, answer, isCorrect}) => {
-    return AsyncStorage.getItem(DECKS).then(decks => {
-      decks = JSON.parse(decks)
-      decks[deckId].questions.push({
-        question,
-        answer,
-        isCorrect,
-      })
-      return AsyncStorage.mergeItem(DECKS, JSON.stringify(decks))
-    })
-  }
+/**
+ * GET SPECIFIC DECK
+ * @param id
+ * @returns {Promise<*>|Promise<T>}
+ */
+export function getDeck (id) {
+  return AsyncStorage.getItem(DECKS).then(decks => {
+    return JSON.parse(decks)[id]
+  })
+}
 
-  /**
-   * Deck creating, using title
-   * @param title
-   * @returns {*|Promise}
-   */
-  createDeck = ({title}) => {
-    let decks = {}
-    decks[title] = {questions: [], title}
-    return AsyncStorage.mergeItem(DECKS, JSON.stringify(decks))
-  }
+/**
+ * SAVE DECK WITH TITLE
+ * @param title
+ * @returns {*|Promise}
+ */
+export function saveDeckTitle (title) {
+  return AsyncStorage.mergeItem(
+    DECKS,
+    JSON.stringify({
+      [title]: {
+        title,
+        questions: [],
+      },
+    }),
+  )
+}
 
-  /**
-   * Creating notification
-   */
-  setNotification = () => {
-    AsyncStorage.getItem(NOTIFICATIONS).then(JSON.parse).then(data => {
-      if (data === null) {
-        Permissions.askAsync(Permissions.NOTIFICATIONS).then(({status}) => {
-          if (status === 'granted') {
-            Notifications.cancelAllScheduledNotificationsAsync()
-            let dateNow = new Date()
-            dateNow.setDate(dateNow.getDate() + 1)
-            dateNow.setHours(12)
-            dateNow.setMinutes(0)
-            Notifications.scheduleLocalNotificationAsync(
-              {
-                title: 'Study Time! :)',
-                body: 'Your brain has limited capacity, use it right',
-                ios: {
-                  sound: true,
-                },
-                android: {
-                  sound: true,
-                  priority: 'high',
-                  sticky: false,
-                  vibrate: true,
-                },
-              },
-              {
-                time: dateNow,
-                repeat: 'day',
-              },
-            )
-            AsyncStorage.setItem(NOTIFICATIONS, JSON.stringify(true))
-          }
-        })
-      }
-    })
-  }
+/**
+ * FIND DECK AND PUSH THE CARD
+ * @param title
+ * @param card
+ */
+export function addCardToDeck (title, card) {
+  getDeck(title)
+  .then(deck => {
+    deck.questions.push(card)
+    return AsyncStorage.mergeItem(DECKS, JSON.stringify({[title]: deck}))
+  })
+}
 
-  /**
-   * Clearing notification
-   * @returns {Promise<*>|Promise<T>}
-   */
-  clearNotification = () => {
-    return AsyncStorage.removeItem(NOTIFICATIONS).then(
-      Notifications.cancelAllScheduledNotificationsAsync,
-    )
+/**
+ * NOTIFICATION FUNCTIONS
+ * @returns {Promise<*>|Promise<T>}
+ */
+export function clearNotification () {
+  return AsyncStorage.removeItem(NOTIFICATION_KEY).then(
+    Notifications.cancelAllScheduledNotificationsAsync,
+  )
+}
+
+function createNotification () {
+  return {
+    title: 'Study!',
+    body: '👋 don\'t forget to study today!',
+    ios: {
+      sound: true,
+    },
+    android: {
+      sound: true,
+      priority: 'high',
+      sticky: false,
+      vibrate: true,
+    },
   }
 }
 
-const api = new API()
+export function setNotification () {
+  AsyncStorage.getItem(NOTIFICATION_KEY).then(JSON.parse).then(data => {
+    if (data === null) {
+      Permissions.askAsync(Permissions.NOTIFICATIONS).then(({status}) => {
+        if (status === 'granted') {
+          Notifications.cancelAllScheduledNotificationsAsync()
 
-export { api as API }
+          let tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          tomorrow.setHours(20)
+          tomorrow.setMinutes(0)
+
+          Notifications.scheduleLocalNotificationAsync(createNotification(), {
+            time: tomorrow,
+            repeat: 'day',
+          })
+
+          AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
+        }
+      })
+    }
+  })
+}
+
