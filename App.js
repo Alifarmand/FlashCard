@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
 import styled from 'styled-components'
-import Navigator from './components/Navigator'
+import Home from './components/Home'
 import reducer from './reducers'
 
 const store = createStore(reducer, applyMiddleware(thunk))
@@ -14,7 +14,7 @@ export default class App extends React.Component {
     return (
       <Provider store={store} >
         <Wrapper >
-          <Navigator />
+          <Home />
         </Wrapper >
       </Provider >
     )

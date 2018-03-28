@@ -1,19 +1,57 @@
+import { API } from '../utils/api'
+
 const CREATE_DECK = 'CREATE_DECK'
-const INITIAL_STATE = {}
-const createDeck = ({ title }) => {
+const CREATE_DECKS = 'CREATE_DECKS'
+const CREATE_CARD = 'CREATE_CARD'
+
+const addDeck = ({ title }) => {
   return {
     type: CREATE_DECK,
     title
   }
 }
 
-
-const actions = {
-  createDeck
+const addDecks = decks => {
+  return {
+    type: CREATE_DECKS,
+    decks
+  }
 }
 
+const getDecks = () => dispatch =>
+  API.getDecks().then(data => {
+    dispatch(addDecks(data))
+  })
 
-const reducer = (state = INITIAL_STATE, action) => {
+const createDeck = ({ title }) => dispatch =>
+  API.createDeck({ title }).then(() => {
+    dispatch(addDeck({ title }))
+  })
+
+const addCard = ({ question, answer, deckId, isCorrect }) => {
+  return {
+    type: CREATE_CARD,
+    question,
+    answer,
+    deckId,
+    isCorrect
+  }
+}
+
+const createCard = ({ question, answer, deckId, isCorrect }) => dispatch =>
+  API.createCard({ question, answer, deckId, isCorrect }).then(() => {
+    dispatch(addCard({ question, answer, deckId, isCorrect }))
+  })
+
+const actions = {
+  addDeck,
+  getDecks,
+  createDeck,
+  addCard,
+  createCard
+}
+
+const reducer = (state = {}, action) => {
   let newState = JSON.parse(JSON.stringify(state))
   switch (action.type) {
     case CREATE_DECK:
@@ -22,12 +60,19 @@ const reducer = (state = INITIAL_STATE, action) => {
         questions: []
       }
       return newState
+    case CREATE_DECKS:
+      if (!action.decks) return {}
+      return JSON.parse(action.decks)
+    case CREATE_CARD:
+      newState[action.deckId].questions.push({
+        question: action.question,
+        answer: action.answer,
+        isCorrect: action.isCorrect
+      })
+      return newState
     default:
       return state
   }
 }
 
-export {
-  reducer as default,
-  actions
-}
+export { reducer as default, actions }
